@@ -1,0 +1,24 @@
+#程序运行时动态调用函数
+#include<stdio.h>
+int add(int a, int b)
+{
+	return a + b;
+}
+int max(int a, int b)
+{
+	return a > b ? a : b;
+}
+int main()
+{
+	int(*p)(int, int);
+	int status = 0;
+	scanf_s("%d", &status);
+	if (status == 1)
+		p = max;
+	else
+		p = add;
+	int i = p(2, 3);
+	printf("%d\n", i);
+
+	system("pause");
+}
