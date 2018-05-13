@@ -1,0 +1,27 @@
+//指针作为参数，只需要传递一个地址，所以代码效率高。
+//当一个结构作为函数参数时，尽量使用指针，不要使用结构变量，这样代码效率会很高
+#include<stdio.h> 
+#include<stdlib.h>
+#include<string.h>
+struct student
+{
+	char name[10];
+	int age;
+};
+void print_student(const struct student *s)
+{
+	printf("name=%s,age=%d\n", s->name, s->age);
+}
+void set_student(struct student *s, const char *name, int age) 
+{
+	strcpy_s(s->name, name);
+	s->age = age;
+}
+int main(void)
+{
+	struct student st = { "tom",20 };
+	set_student(&st, "mike", 100);
+	print_student(&st);
+	getchar();
+	return 0;
+}
