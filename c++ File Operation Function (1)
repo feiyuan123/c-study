@@ -1,0 +1,248 @@
+#include<stdio.h>
+#include<string.h>
+#include <stdlib.h>
+//#define  _CRT_SECURE_NO_WARNINGS
+int main1(void)
+{
+	char s[1024] = { 0 };
+	FILE *p = fopen("E:\\temp\\a.txt", "w");//用写的方式打开一个文件
+	//"w"如果文件不存在就建立一个，如果文件存在，就覆盖
+	fputs("hello world\n", p);//向文件写入一个字符串
+	fputs("feifei\n", p);
+	while (1) {
+		memset(s, 0, sizeof(s));
+		//scanf("%s", s);
+		gets_s(s);//可以接受有空格字符串
+		if (strcmp(s, "exit") == 0)
+			break;
+		int len = strlen(s);
+		s[len] = '\n';
+		fputs(s, p);
+	}
+	fclose(p);//关闭这个文件
+	printf("end\n");
+	getchar();
+	return 0;
+}
+int main2 ()
+{
+	char s[1024] = { 0 };
+	FILE *p = fopen("E:\\temp\\a.txt", "r");//用读的方式打开一个文件
+	//feof(p);//如果到了文件结尾，那么就一直循环
+	while (!feof(p)) {
+		memset(s, 0, sizeof(s));
+		fgets(s, sizeof(s), p);//第一个参数是一个内存地址，第二个是这块内存的大小，第三个是fopen返回的文件指针
+		printf("%s", s);
+	}
+	fclose(p);
+	getchar();
+	return 0;
+}
+void code(char *s)
+{
+	while (*s)//遍历一个字符串
+	{
+		(*s)++;
+		s++;
+	}
+}
+int main3()
+{
+	char s[1024] = { 0 };
+	FILE *p = fopen("E:\\temp\\a.txt", "r");//用读的方式打开一个文件
+	FILE *p1 = fopen("E:\\temp\\b.txt", "w");
+											//feof(p);//如果到了文件结尾，那么就一直循环
+	while (!feof(p)) {
+		memset(s, 0, sizeof(s));
+		fgets(s, sizeof(s), p);//第一个参数是一个内存地址，第二个是这块内存的大小，第三个是fopen返回的文件指针
+		code(s); 
+		fputs(s, p1);// fputs 写一个字符串到文件中去
+	}
+	fclose(p1);
+	fclose(p);
+	getchar();
+	return 0;
+}
+void decode(char *s)
+{
+	while (*s)//遍历一个字符串
+	{
+		(*s)--;
+		s++;
+	}
+}
+int main4()
+{
+	char s[1024] = { 0 };
+	FILE *p = fopen("E:\\temp\\b.txt", "r");//用读的方式打开一个文件
+	FILE *p1 = fopen("E:\\temp\\c.txt", "w");
+	//feof(p);//如果到了文件结尾，那么就一直循环
+	while (!feof(p)) {
+		memset(s, 0, sizeof(s));
+		fgets(s, sizeof(s), p);//第一个参数是一个内存地址，第二个是这块内存的大小，第三个是fopen返回的文件指针
+		decode(s);
+		fputs(s, p1);// fputs 写一个字符串到文件中去
+	}
+	fclose(p1);
+	fclose(p);
+	getchar();
+	return 0;
+}
+void swap(int *a, int *b)
+{
+	int tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+void pupple(int *p, int n)
+{
+	int i;
+	int j;
+	for (i = 0; i < n; i++) {
+		for (j = 1; j < n - i; j++) {
+			if (p[j - 1]>p[j])
+				swap(&p[j - 1], &p[j]);
+		}
+	}
+}
+int main5()//在栈中建立一个数组，并对文件内容进行排序
+{
+	int array[10] = { 0 };
+	char buf[100];
+	int index = 0;
+	FILE *p = fopen("E:\\temp\\a.txt", "r");
+	if (p == NULL) {
+		printf("error\n");
+	}
+	else
+	{
+		while (!feof(p)) {
+			memset(buf, 0, sizeof(buf));
+			fgets(buf, sizeof(buf), p);//从文件中读一行
+			array[index] = atoi(buf);//将读取的一行转化为int
+			index++;
+		}
+		fclose(p);
+	}
+	pupple(array, index);//将数组排序
+	p = fopen("E:\\temp\\b.txt", "w");
+	int i;
+	for (i = 0; i < index; i++) {
+		memset(buf, 0, sizeof(buf));
+		sprintf(buf, "%d\n", array[i]);//数组成员转化为字符串
+		fputs(buf, p);
+	}
+	fclose(p);
+	getchar();
+	return 0;
+}
+int main7(void)//在堆中建立一个动态数组，并对文件内容进行排序
+{
+	char buf[100];
+	int index = 0;
+	FILE *p = fopen("E:\\temp\\a.txt", "r");//第一次打开a.txt目的是知道文件有多少行
+	
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));//每次读取文件一行前把这个buf清空
+		fgets(buf, sizeof(buf), p);//从文件中读一行
+		index++;//只计数v   
+	}
+	fclose(p);
+	int *array = (int *)calloc(sizeof(int), index);//在堆中建立一个动态数组，动态数组的成员数量和a.txt文件的行一样多
+
+	p = fopen("E:\\temp\\a.txt", "r");
+	index = 0;//计数器从0重新开始
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));//每次读取文件一行前把这个buf清空
+		fgets(buf, sizeof(buf), p);//从文件中读一行
+		array[index] = atoi(buf);
+		index++;//只计数v   
+	}
+	fclose(p);
+	pupple(array, index);//将数组排序
+	p = fopen("E:\\temp\\b.txt", "w");
+	int i;
+	for (i = 0; i < index; i++) {
+		memset(buf, 0, sizeof(buf));
+		sprintf(buf, "%d\n", array[i]);//数组成员转化为字符串
+		fputs(buf, p);
+	}
+	fclose(p);
+	getchar();
+	return 0;
+}
+
+int calc_string(const char *s)
+{
+	char buf1[100] = { 0 };
+	char oper1 = 0;
+	char buf2[100] = { 0 };
+
+	int len = strlen(s);
+	int i;
+	for (i = 0; i < len; i++) {
+		if (s[i] == '+' || s[i] == '-' || s[i] == '*' || s[i] == '/') {
+			strncpy(buf1, s, i);//i=2时字符串s从头数长度为2的字符串复制buf1
+			oper1 = s[i];
+			break;
+		}
+	}
+	int start = i + 1;
+	for (; i < len; i++) {
+		if (s[i] == '=') {
+			strncpy(buf2, &s[start], i - start);
+		}
+	}
+	//printf("buf1=%s\noper1=%c\nbuf2=%s\n", buf1,oper1,buf2);//测试
+
+	switch (oper1) {
+	case'+':
+		return atoi(buf1) + atoi(buf2);
+	case'-':
+		return atoi(buf1) - atoi(buf2);
+	case'*':
+		return atoi(buf1) * atoi(buf2);
+	case'/': {
+		int a = atoi(buf2);
+		if (a)
+			return atoi(buf1) / atoi(buf2);
+		else
+			return 0;
+	}
+	}
+}
+void cutereturn(char *s)//把字符串最后的回车吃掉
+{
+	int len = strlen(s);
+	if (s[len - 1] == '\n')
+		s[len - 1] = 0;
+}
+//1，先解析计算式的字符串（calc_string）
+//2，按行读文件，把计算结果（value）读出
+//3，buf后面的字符串结尾有‘\n’,利用cuterreturn函数去掉回车键
+
+int main8(void)
+{
+	//const char *s = "32  +   56  =";//测试
+	//printf("%d\n",calc_string(s));//测试
+	FILE *p = fopen("E:\\temp\\a.txt", "r");
+	FILE *p1 = fopen("E:\\temp\\b.txt", "w");
+	char buf[1024];
+	char buf1[1024];
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));
+		fgets(buf, sizeof(buf), p);//从文件中读取一行记录，字符串最后以'\n'结尾
+		cutereturn(buf);
+		printf("%s\n", buf);//测试
+		int value = calc_string(buf);
+		printf("%d\n", value);//测试
+		memset(buf1, 0, sizeof(buf1));
+		sprintf(buf1, "%s%d\n", buf, value);//将buf和buf的计算结果重新组织为一个字符串
+		printf("buf1=%s\n", buf1);//测试
+		fputs(buf1, p1);//将重新组合后新的字符串写入新的文件
+	}
+	fclose(p);
+	fclose(p1);
+	getchar();
+	return 0;
+}
