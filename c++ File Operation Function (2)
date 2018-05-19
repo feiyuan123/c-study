@@ -176,3 +176,320 @@ int main(void)
 	getchar();
 	return 0;
 }
+
+#include<stdio.h>
+#include<string.h>
+#include <stdlib.h>
+//#define  _CRT_SECURE_NO_WARNINGS
+int main1(void)//fopen和w的方式
+{
+	char s[1024] = { 0 };
+	FILE *p = fopen("E:\\temp\\a.txt", "w");
+	while (1) {
+		memset(s, 0, sizeof(s));
+		//scanf("%s", s);//接受一行文件时不能有空格
+		gets_s(s);//可以有空格
+		if (strcmp(s, "exit")==0)
+			break;
+		int len = strlen(s);
+		s[len] = '\n';
+		fputs(s, p);
+	}
+	fclose(p);
+
+	getchar();
+	return 0;
+}
+int main2(void)//fopen和r的方式
+//feof的作用：如果到了文件结尾，返回真
+{
+	char s[1024] = { 0 };
+	FILE *p = fopen("E:\\temp\\a.txt", "r");
+	while (!feof(p)) {
+		memset(s, 0, sizeof(s));
+		fgets(s, sizeof(s), p);
+		printf("%s\n", s);
+	}
+	fclose(p);
+
+	getchar();
+	return 0;
+}
+void code(char *s)
+{
+	while (*s) {
+		(*s)++;
+		s++;
+	}
+}
+void decode(char *s)
+{
+	while (*s) {
+		(*s)--;
+		s--;
+	}
+}
+int main3(void)//文件简单加密,解密
+{
+	char s[1024] = { 0 };
+	FILE *p = fopen("E:\\temp\\a.txt", "r");
+	FILE *p1 = fopen("E:\\temp\\c.txt", "w");
+	while (!feof(p)) {
+		memset(s, 0, sizeof(s));
+		fgets(s, sizeof(s), p);
+		decode(s);
+		fputs(s, p1);
+	}
+	fclose(p);
+	fclose(p1);
+	getchar();
+	return 0;
+}
+int main4(void)//以追加的方式打开文件
+{
+	FILE *p = fopen("E:\\temp\\a.txt", "a");
+	if (p = NULL)
+	{
+		printf("file reeor");
+	}
+	else
+	{
+		fputs("hello", p);
+		fclose(p);
+	}
+	printf("end\n");
+	getchar();
+	return 0;
+}
+void swap(int *a, int *b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+void pupple(int *p, int n)
+{
+	int i;
+	int j;
+	for (i = 0; i < n; i++) {
+		for (j = 1; j < n - i; j++) {
+			if (p[j - 1] < p[j])
+				swap(&p[j - 1], &p[j]);
+		}
+	}
+}
+int main5(void)
+{
+	int index = 0;
+	char buf[100];
+	 
+	FILE *p =fopen("E:\\temp\\a.txt", "r");
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));
+		fgets(buf, sizeof(buf), p);
+		index++;
+	}//统计行数 
+	fclose(p);
+
+	int *array = calloc(sizeof(int), index);//动态数组
+	 
+	p = fopen("E:\\temp\\a.txt", "r");
+	index = 0;
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));
+		fgets(buf, sizeof(buf), p);
+		array[index] = atoi(buf);
+		index++;
+	} 
+	fclose(p);
+	pupple(array, index);
+	p = fopen("E:\\temp\\b.txt", "w");
+	int i;
+	for (i = 0; i < index; i++) {
+		memset(buf, 0, sizeof(buf));
+		sprintf(buf, "%d\n", array[i]);//数组转化为字符串
+		fputs(buf, p);
+	}
+	fclose(p);
+	getchar();
+	return 0;
+}
+int main(void)//二进制文件的拷贝
+{
+	FILE *p = fopen("E:\\temp\\fei.WMV", "rb");
+	FILE *p1 = fopen("E:\\temp\\yuan.WMV", "wb");
+
+	char buf[1024 * 4];//以4K的速度拷贝
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));
+		size_t res = fread(buf, sizeof(char), sizeof(buf), p);
+		fwrite(buf, sizeof(char), res, p1);
+	}
+	fclose(p);
+	fclose(p1);
+	printf("end\n");
+	getchar();
+	return 0;
+}
+
+#include<stdio.h>
+#include<string.h>
+#include <stdlib.h>
+#include<sys/stat.h> 
+#include<time.h>
+//#define  _CRT_SECURE_NO_WARNINGS
+
+int main1(void)//二进制文件的拷贝
+{
+	FILE *p = fopen("E:\\temp\\fei.WMV", "rb");
+	FILE *p1 = fopen("E:\\temp\\a.WMV", "wb");
+
+	char buf[1024 * 4];//以4K的速度拷贝
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));
+		size_t res = fread(buf, sizeof(char), sizeof(buf), p);
+		fwrite(buf, sizeof(char), res, p1);
+	}
+	fclose(p);
+	fclose(p1);
+	printf("end\n");
+	getchar();
+	return 0;
+}
+int main(void)//利用stat对文件高效拷贝,并计时
+{
+	clock_t c1 = clock();//得到系统当前时间，单位毫秒
+	struct stat st = { 0 };//定义一个结构，st
+	stat("E:\\temp\\fei.WMV", &st);
+	char *array = (char*)malloc(st.st_size);
+	FILE *p = fopen("E:\\temp\\fei.WMV", "rb");
+	fread(array, sizeof(char), st.st_size, p);
+	fclose(p);
+	p = fopen("E:\\temp\\a.WMV", "wb");
+	fwrite(array, sizeof(char), st.st_size, p);
+	clock_t c2 = clock();
+	printf("end,%u\n", c2 - c1);
+
+	getchar();
+	return 0;
+}
+
+#include<stdio.h>
+#include<string.h>
+#include <stdlib.h>
+#include<sys/stat.h> 
+#include<time.h>
+//#define  _CRT_SECURE_NO_WARNINGS
+
+int main1(void)//二进制文件的拷贝
+{
+	FILE *p = fopen("E:\\temp\\fei.WMV", "rb");
+	FILE *p1 = fopen("E:\\temp\\a.WMV", "wb");
+
+	char buf[1024 * 4];//以4K的速度拷贝
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));
+		size_t res = fread(buf, sizeof(char), sizeof(buf), p);
+		fwrite(buf, sizeof(char), res, p1);
+	}
+	fclose(p);
+	fclose(p1);
+	printf("end\n");
+	getchar();
+	return 0;
+}
+int main2(void)//利用stat对文件高效拷贝,并计时
+{
+	clock_t c1 = clock();//得到系统当前时间，单位毫秒
+	struct stat st = { 0 };//定义一个结构，st
+	stat("E:\\temp\\fei.WMV", &st);
+	char *array = (char*)malloc(st.st_size);
+	FILE *p = fopen("E:\\temp\\fei.WMV", "rb");
+	fread(array, sizeof(char), st.st_size, p);
+	fclose(p);
+	p = fopen("E:\\temp\\a.WMV", "wb");
+	fwrite(array, sizeof(char), st.st_size, p);
+	clock_t c2 = clock();
+	printf("end,%u\n", c2 - c1);
+	free(array);
+	getchar();
+	return 0;
+}
+struct student
+{
+	char name[100];
+	int age;
+};
+int main3(void)//把结构体写入一个二进制文件
+{
+	struct student st[5] = { {"刘德华",30}, {"张学友",33 } ,{ "张大海",32 } ,{ "张花花",23 } ,{ "张小狗",13 } };
+	FILE *p = fopen("E:\\temp\\a.dat", "wb");
+	fwrite(&st, sizeof(st), 1, p);
+	fclose(p);
+
+	getchar();
+	return 0;   
+}
+int main4(void)//结构体二进制文件的读出
+{
+	struct student st[5] = { 0 };
+	FILE *p = fopen("E:\\temp\\a.dat", "rb");
+	fread(&st, sizeof(st), 1, p);
+	fclose(p);
+	for (int i = 0; i < 5; i++) {
+		printf("name:%s,age:%d\n", st[i].name, st[i].age);
+	}
+	getchar();
+	return 0;
+}
+struct students
+{
+	char name[100];
+	int age;
+};
+int main5(void)//把结构体从键盘一个一个的写入一个二进制文件
+{
+	struct students st[5] = { 0 };
+	int i;
+	for (i = 0; i < 5; i++) {
+		scanf("%s", st[i].name);
+		scanf("%d", &st[i].age);
+	}
+	FILE *p = fopen("E:\\temp\\a.dat", "wb");
+	fwrite(st, sizeof(struct students), 5, p);
+	fclose(p);
+	
+	getchar();
+	return 0;
+}
+int main6(void)//把二进制文件读出到黑窗口
+{
+	struct students st = { 0 };
+	FILE *p = fopen("E:\\temp\\a.dat", "rb");
+	while (1) {
+		memset(&st, 0, sizeof(struct students));
+		if (fread(&st, sizeof(struct students), 1, p) == 0)
+			break;
+		printf("name:%s,age:%d\n", st.name, st.age);
+	}
+	fclose(p);
+
+	getchar();
+	return 0;
+}
+int main(void)//把二进制文件读出到黑窗口
+{
+	struct students st = { 0 };
+	FILE *p = fopen("E:\\temp\\a.dat", "rb");
+
+	memset(&st, 0, sizeof(struct students));
+	fread(&st, sizeof(struct students), 1, p)；
+	printf("name:%s,age:%d\n", st.name, st.age);
+
+	fclose(p);
+
+	getchar();
+	return 0;
+}
+
+
