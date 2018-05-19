@@ -1,0 +1,178 @@
+#include<stdio.h>
+#include<string.h>
+#include <stdlib.h>
+//#define  _CRT_SECURE_NO_WARNINGS
+void code(char *p, size_t n) //char *p可能不是一个字符串，因为他可能不是以\n结尾的，所以需要加一个size_t n标识他的大小
+{
+	size_t i;
+	for (i = 0; i < n; i++) {
+		p[i] += 3;
+	}
+}
+int main1(void)
+{
+	FILE *p = fopen("E:\\temp\\a.wmv", "rb");
+	FILE *p1 = fopen("E:\\temp\\b.wmv", "wb");
+	char buf[1024 * 4];
+	while (!feof(p)) {
+		memset(buf, 0, sizeof(buf));
+		size_t res = fread(buf, sizeof(char), sizeof(buf), p);
+		code(buf, res);
+		fwrite(buf, sizeof(char), res, p1);
+	}
+	fclose(p);
+	fclose(p1);
+	printf("end\n");
+	getchar();
+	return 0;
+}
+#include<sys/stat.h>
+int main2(void)
+{
+	struct stat st = { 0 };//定义一个结构，名字叫st
+	stat("E:\\temp\\a.txt", &st);
+
+	printf("%u\n", st.st_size);
+
+	printf("end\n");
+	getchar();
+	return 0;
+}
+struct student
+{
+	char name[100];
+	int age;
+};
+
+int main3(void)//二进制文件的写--对结构
+{
+	struct student st = { "刘德华",30 };
+	FILE *p = fopen("E:\\temp\\a.dat", "wb");
+	fwrite(&st, sizeof(st), 1, p);
+	fclose(p);
+	getchar();
+	return 0;
+}
+int main4(void)//二进制文件的读--对结构
+{
+	struct student st = { "刘德华",30 };
+	FILE *p = fopen("E:\\temp\\a.dat", "rb");
+	fread(&st, sizeof(st), 1, p);
+	fclose(p);
+	printf("%s,%d\n", st.name, st.age);
+	getchar();
+	return 0;
+}
+#include<time.h>
+int main5(void)//生成随机数的一个函数
+{
+	srand(time(NULL));
+	int i;
+	FILE *p = fopen("E:\\temp\\a.txt", "w");
+	for (i = 0; i < 1000; i++) {
+		fprintf(p, "%d\n", rand() % 513);//生成0到512之间的随机数
+	}
+	//文本文件，每一行代表一个整数，整数为从0到512之间的一个随机数
+	//对这个文件进行排序，不能用堆排序，只能用栈内存
+	fclose(p);
+	printf("end\n");
+	getchar();
+	return 0;
+}
+int main6(void)//对文件排序
+{
+	FILE *p = fopen("E:\\temp\\a.txt", "r");
+	int array[513] = { 0 };
+	while (!feof(p)) {
+		char buf[100] = { 0 };
+		fgets(buf, sizeof(buf), p);
+		if (buf[0] != 0)//如果读取的行不是空行，那么就执行代码
+		{
+			int value = atoi(buf);
+			array[value]++;
+		}
+	}
+	fclose(p);
+	p = fopen("E:\\temp\\b.txt", "w");
+	int i;
+	int j;
+	for (i = 0; i < 513; i++) {
+		for (j = 0; j < array[i]; j++) {
+			fprintf(p,"%d\n", i);
+			//printf("array[%d]=%d\n",i,array[i]);
+		}
+	}
+	fclose(p);
+	printf("end\n");
+	getchar();
+	return 0;
+}
+int main7(void)
+{
+	FILE *p = fopen("E:\\temp\\a.txt", "w");
+	while (1) {
+		char buf[100] = { 0 };
+		scanf("%s", buf);
+		if (strcmp(buf, "exit") == 0)
+			break;
+		fprintf(p, "%s\n", buf);
+		fflush(p);//fflush将缓冲区的内容立即写入到文件
+		//优点：不会因为停电死机导致缓冲区内容丢失
+		//缺点：硬盘读写次数增加，导致程序效率低下，硬盘寿命变短
+		//修改配置文件的时候，做一些不经常修改的数据，很重要的数据，用fflush
+	}
+	fclose(p);
+	getchar();
+	return 0;
+}
+int main8(void)
+{
+	//remove("E:\\temp\\a.txt");//删除文件
+	rename("E:\\temp\\b.txt", "E:\\temp\\a.txt");//文件改名
+	getchar();
+	return 0;
+} 
+
+//二进制文件的排序
+int main9(void)
+{
+	struct student st[5] = { 0 };
+	FILE *p = fopen("E:\\temp\\a.dat", "rb");
+	int i;
+	for (i = 0; i < 5; i++) {
+		fread(&st[i], sizeof(struct student), 1, p);
+	}
+	fread(st, sizeof(struct student), 5, p);
+	for (i = 0; i < 5; i++) {
+		printf("name=%s,age=%d\n", st[i].name, st[i].age);
+	}
+	getchar();
+	return 0;
+}
+//每次读写一个名字和年龄然后写入到二进制文件中
+#include<stdio.h>
+#include<string.h>
+#include <stdlib.h>
+//#define  _CRT_SECURE_NO_WARNINGS
+struct student
+{
+	char name[100];
+	int age;
+};
+int main(void)
+{
+	FILE *p = fopen("E:\\temp\\a.dat", "wb");
+	struct student st[5] = { 0 };
+	int i;
+	for (i = 0; i < 5; i++) {
+		printf("name:");
+		scanf("%s", st[i].name);
+		printf("age:");
+		scanf("%d\n", &st[i].age);
+	}
+	FILE *p = fopen("E:\\temp\\a.dat", "wb");
+	fwrite(&st, sizeof(st), 10, p);
+	fclose(p);
+	getchar();
+	return 0;
+}
