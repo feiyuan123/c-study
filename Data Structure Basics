@@ -1,0 +1,361 @@
+//选择排序。。。。。。。。。。。。。。。。。。。。。。。。。
+int minkey(int *array, int low, int high)//查找指定范围内的最小值
+//low为数组的开始下标
+//high为数组的终止下标
+//返回值为最小元素下标
+{
+	int min = low;
+	int key = array[low];//刚开始假定第一个元素最小
+	int i;
+	for (i = low + 1; i < high; i++) {
+		if (key > array[i]) {
+			key = array[i];
+			min = i;
+		}
+	}
+	return min;
+}
+void swap(int *a, int *b)
+{
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+void select(int *array, int n)//选择排序法
+{
+	int i;
+	for (i = 0  ; i < n; i++) {
+		int j = minkey(array, i, n);
+		if (i != j)//范围内的第一个成员不是最小的
+			swap(&array[i], &array[j]);
+	}
+}
+void print(int *array, int a)
+{
+	int i;
+	for (i = 0; i < a; i++) {
+		printf("%d\n", array[i]);
+	}
+}
+int main8()
+{
+	int array[10] = { 32,25,16,42,45,67,89,12 };
+	//minkey(array, 0, 10 );
+	//printf("%d\n", minkey(array, 0, 8));
+	select(array, 8);
+	print(array, 8);
+	getchar();
+	return 0; 
+}
+//顺序查找。。。。。。。。。。。。。。。。。。。。。。。。。
+int seq(int *array, int low, int high, int key)
+//在指定范围内查找和key相同的值，找到返回下标，找不到就返回-1；
+{
+	int i;
+	for (i = low; i < high; i++) {
+		if (array[i] == key)
+			return i;
+	}
+	return -1;
+}
+int main10()
+{
+	int array[10] = { 2,31,1,5,6,3,7,9,0,23 };
+	seq(array, 0,10,0);
+	printf("%d\n", seq(array, 0, 10, 0));
+	getchar();
+	return 0;
+}
+//二分法查找。。。。。。。。。。。。。。。。。。。。。。。。。
+int bin(int *array, int low, int high, int key)
+{
+	if (low <= high) //递归终止条件
+	{
+		int mid = (low + high) / 2;
+		if (key == array[mid])//中间切一刀，正好和需要查找的数相等
+			return mid;
+		else if (key > array[mid])//查找的数大于array[mid].那么就在下半部分继续切
+			return bin(array, mid + 1, high,key);
+		else//如果要查找的数小于array[mid]。那么就在上半部分继续切
+			return bin(array, low, mid - 1,key);
+	}
+	return -1;//没有找到
+}
+int main11(void)
+{
+	int array[10] = { 1,2,3,4,5,6,7,8,9 };
+	bin(array, 0, 9, 6);
+	printf("%d\n", bin(array, 0, 9, 61)); 
+	getchar();
+	return 0;
+}
+//链表。。。。。。。。。。。。。。。。。。。
+struct list
+{
+	int data;//数据域
+	struct list *next;//指针域
+};
+struct list *create_list()//建立一个结点
+{
+	return (struct list *)calloc(sizeof(struct list), 1);
+}
+void traverse(struct list *ls)//循环遍历一个链表
+{
+	struct list *p = ls;
+	while (p) {
+		printf("%d\n", p->data);
+		p = p->next;//p指向他对应的下一个节点 
+	}
+}
+struct list*insert_list(struct list*ls, int n, int data)//在指定位置插入元素
+{
+	struct list*p = ls;
+	while (p&&n--) {
+		p = p->next;
+	}
+	if (p == NULL) {
+		return NULL;//n的位置大于链表节点数 
+	}
+	struct list *node = create_list();//建立一个新的节点
+	node->data = data;
+	node->next = p->next;
+	p->next = node;
+	return node;//返回插入节点的位置
+}
+int delete_list(struct list *ls, int n)//删除指定位置的元素
+{
+	struct list *p = ls;
+	while (p&&n--)
+	{
+		p = p->next;
+	}
+	if (p == NULL) {
+		return -1;//n的位置不合适
+	}
+	struct list *tmp = p->next;  
+	p ->next= p->next->next;
+	free(p);
+	p = tmp;
+	return 0;//删除成功
+}
+int main(void)
+{
+	struct list *first = create_list();//在堆中创建一个节点
+	struct list *second= create_list();//在堆中创建一个节点
+	struct list *third= create_list();//在堆中创建一个节点
+	first->next = second;
+	second->next = third;
+	third->next = NULL;//对于链表最后一个节点，next的最后一个节点一定为NULL 
+	first->data = 1;
+	second->data = 2;
+	third->data = 3;
+
+	insert_list(first, 0, 10);//插入一般首节点不要动
+	insert_list(first, 0, 20);
+	insert_list(first, 0, 30);
+	insert_list(first, 1, 11);
+
+	//delete_list(first, 2);
+	traverse(first);  
+	printf("end\n");
+	getchar();
+	return 0;
+}
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+//链表。。。。。。。。。。。。。。。。。。。
+struct list
+{
+	int data;//数据域
+	struct list *next;//指针域
+};
+struct list *create_list()       //建立一个结点。。。
+{
+	return (struct list *)calloc(sizeof(struct list), 1);
+}
+
+void traverse(struct list *ls)//循环遍历一个链表。。。
+{
+	struct list *p = ls;
+	while (p) {
+		printf("%d\n", p->data);
+		p = p->next;//p指向他对应的下一个节点 
+	}
+}
+int count_list(struct list *ls)//返回链表元素的个数。。。
+{
+	struct list *p = ls;
+	int count = 0;
+	while (p) {
+		count++;
+		p = p->next;
+	}
+	return count;
+}
+struct list*insert_list(struct list*ls, int n, int data)//在指定位置插入元素。。。
+{
+	struct list*p = ls;
+	while (p&&n--) {
+		p = p->next;
+	}
+	if (p == NULL) {
+		return NULL;//n的位置大于链表节点数 
+	}
+	struct list *node = create_list();//建立一个新的节点
+	node->data = data;                //将此节点的数据域赋值为data
+	node->next = p->next;             //将此节点的下一个指针指向p的下一个指针
+	p->next = node;                   //将此节点的当前节点指向p的下一个节点 
+	return node;//返回插入节点的位置
+}
+void clear_list(struct list *ls)//清空链表，只保留首节点。。。
+{
+	struct list *p = ls->next;
+	while (p)
+	{
+		struct list *tmp = p->next;
+		free(p);
+		p = tmp;
+	}
+	ls->next = NULL;//只保留首节点，那么首节点的next也应该设置为NULL
+}
+int delete_list(struct list *ls, int n)//删除指定位置的元素
+{
+	struct list *p = ls;
+	while (p&&n--)
+	{
+		p = p->next;
+	}
+	if (p == NULL) {
+		return -1;//n的位置不合适
+	}
+	struct list *tmp = p->next;
+	p->next = p->next->next;
+	free(p);
+	p = tmp;
+	return 0;//删除成功
+}
+int empty_list(struct list *ls)//返回链表是否为空...
+{
+	if (ls->next)
+		return 0;
+	else
+		return -1;
+}
+struct list *local_list(struct list *ls, int n)//返回链表指定位置的节点。。。
+{
+	struct list *p = ls;
+	while (p&&n--) {
+		p = p->next;
+	}
+	if (p == NULL)//没有这个节点
+		return NULL;
+
+	return p;    //返回这个节点位置
+}
+struct list *elem_locale(struct list *ls, int data)//返回数据域等于data的节点...
+{
+	struct list *p = ls;
+	while (p) {
+		if (p->data == data)
+			return p;
+		p = p->next;
+	}
+	return NULL;
+}
+int elem_pos(struct list*ls, int data)//返回数据域等于data的节点位置。。。
+{
+	struct list *p = ls;
+	int index = 0;
+	while (p) {
+		index++;
+		if (p->data == data)   
+			return index;
+		p = p->next;
+	}
+	return -1;
+} 
+struct list *last_list(struct list *ls)//得到链表最后一个节点
+{
+	struct list *p = ls;
+	while (p->next)
+	{
+		p = p->next;
+	}
+	return p;
+}
+void merge_list(struct list *ls1, struct list *ls2)//合并两个链表，结果放入ls1中。。。
+{
+	//只合并链表的节点，不合并链表头
+	last_list(ls1)->next = ls2->next;
+	free(ls2);//链表头不要了
+}
+void reverse(struct list *ls)//链表的逆置
+{
+	if (ls->next == NULL)
+		return;//只有一个首节点，不需要逆置
+
+	if (ls->next->next == NULL)
+		return;//不需要逆置
+	struct list*last = ls->next;//逆置后ls->next就成了最后一个节点
+	 
+	struct list *pre = ls;//上一个节点的指针
+	struct list *cur = ls->next;//当前节点的指针
+	struct list *next = NULL;//下一个节点的指针
+	while (cur) {
+		next = cur->next;
+		cur->next = pre;
+		pre = cur;
+		cur = next;
+	}
+	ls->next = pre;
+	last->next = NULL;
+}
+int main(void)
+{	//链表的搭建从first到NULL
+	struct list *first = create_list();//在堆中创建一个节点
+	struct list *second = create_list();//在堆中创建一个节点
+	struct list *third = create_list();//在堆中创建一个节点
+	first->next = second;
+	second->next = third;
+	third->next = NULL;//对于链表最后一个节点，next的最后一个节点一定为NULL 
+	//链表数据域的初始化
+	first->data = 1;
+	second->data = 2;
+	third->data = 3;
+	
+	//链表的插入
+	insert_list(first, 2, 10);//插入一般首节点不要动
+	insert_list(first, 1, 20);
+	insert_list(first, 1, 30);
+	insert_list(first, 1, 11);
+
+	//clear_list(first);               //清空链表元素，只保留首节点
+	//delete_list(first, 2);
+	//链表的循环遍历
+	traverse(first);
+	printf("end\n");
+	printf("%d\n", count_list(first));//返回链表元素的个数
+	printf("%d\n", local_list(first, 3)->data);//返回指定位置的节点
+	printf("%d\n", elem_locale(first, 20));//返回数据域等于data的节点
+	printf("%d\n", elem_pos(first, 20));//返回数据域等于data的节点位置
+	printf("%d\n", last_list(first)->data); //得到链表最后一个节点
+	printf("----------------------------------------------------\n");
+	struct list *first1 = create_list(); //创建链表first1
+	int i;
+	for (i = 0; i < 10; i++)
+	{
+		insert_list(first1, 0, i);
+	}
+
+	merge_list(first, first1);
+	printf("----------------------------------------------------\n");
+	traverse(first);
+	reverse(first);
+	printf("----------------------------------------------------\n");
+	traverse(first);
+	getchar();
+	return 0;
+} 
