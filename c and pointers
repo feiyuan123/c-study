@@ -39,3 +39,19 @@ int main()
 	system("pause");
 	return 0;
 }
+3，检验和
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+	int ch=0;
+	signed char checksum=-1;
+	while((ch=getchar())!=EOF){
+		putchar(ch);
+		checksum += ch;
+		if (ch == '\n')
+			printf("%d\n", checksum);
+	}
+	system("pause");
+	return 0;
+}
