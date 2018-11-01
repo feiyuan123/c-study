@@ -1,0 +1,19 @@
+第一章
+2 注意NULL和EOF
+#include<stdio.h>
+#define max 100
+int main()
+{
+	int i = 0;
+	int j = 0;
+	char input[10][max];
+	while ( gets(input[i]) !=NULL)
+		i++;
+	while (j<i) {
+		printf("第%d行", j);
+		puts(input[j]);
+		j++;
+	}
+	getchar();
+	return 0;
+}
