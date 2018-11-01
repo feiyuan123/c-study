@@ -17,3 +17,25 @@ int main()
 	getchar();
 	return 0;
 }
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+	int ch = 0;
+	int i = 1;//行号
+	int flag = 1;
+	while ((ch = getchar()) != EOF)//EOF是标准输入的结尾
+	{
+		if (flag == 1)//注意比较是==
+		{
+			printf("<%d>", i);
+			i++;
+			flag++;
+		}
+		if (ch == '\n')
+			flag = 1;
+		putchar(ch);
+	}
+	system("pause");
+	return 0;
+}
